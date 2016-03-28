@@ -4,7 +4,6 @@ Base class for command-line driven asynchronous worker.
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
 from argparse import ArgumentParser
-from logging import getLogger
 
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_environ
