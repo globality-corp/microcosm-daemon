@@ -84,7 +84,7 @@ class Daemon(object):
         if args.processes < 1:
             parser.error("--processes must be positive")
         elif args.processes == 1:
-            runner = SimpleRunner(self.start, args)
+            runner = SimpleRunner(self, args)
         else:
             runner = ProcessRunner(args.processes, self, args)
 
