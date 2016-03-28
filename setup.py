@@ -16,6 +16,7 @@ setup(
     zip_safe=False,
     install_requires=[
         "microcosm>=0.7.0",
+        "microcosm-logging>=0.3.0",
     ],
     setup_requires=[
         "nose>=1.3.6",
