@@ -20,7 +20,7 @@ def test_no_error_strict():
     Error handling is a noop if there are no errors.
 
     """
-    error_policy = ErrorPolicy(strict=True)
+    error_policy = ErrorPolicy(strict=True, health_report_interval=3.0)
     with error_policy:
         pass
 
@@ -32,7 +32,7 @@ def test_no_error_non_strict():
     Error handling is a noop if there are no errors.
 
     """
-    error_policy = ErrorPolicy(strict=False)
+    error_policy = ErrorPolicy(strict=False, health_report_interval=3.0)
     with error_policy:
         pass
 
@@ -44,7 +44,7 @@ def test_error_non_strict():
     Non strict error handling captures errors.
 
     """
-    error_policy = ErrorPolicy(strict=False)
+    error_policy = ErrorPolicy(strict=False, health_report_interval=3.0)
     error = Exception()
 
     with error_policy:
@@ -58,7 +58,7 @@ def test_error_strict():
     Strict error handling raises errors.
 
     """
-    error_policy = ErrorPolicy(strict=True)
+    error_policy = ErrorPolicy(strict=True, health_report_interval=3.0)
     error = Exception()
 
     def defer():
@@ -74,7 +74,7 @@ def test_fatal_non_strict():
     Error handling does not capture fatal errors.
 
     """
-    error_policy = ErrorPolicy(strict=False)
+    error_policy = ErrorPolicy(strict=False, health_report_interval=3.0)
     error = FatalError()
 
     def defer():
@@ -90,7 +90,7 @@ def test_fatal_strict():
     Error handling does not capture fatal errors.
 
     """
-    error_policy = ErrorPolicy(strict=True)
+    error_policy = ErrorPolicy(strict=True, health_report_interval=3.0)
     error = FatalError()
 
     def defer():
