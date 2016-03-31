@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from argparse import ArgumentParser
 
 from microcosm.api import create_object_graph
-from microcosm.loaders import load_from_environ
+from microcosm.loaders import load_each, load_from_environ, load_from_dict
 
 from microcosm_daemon.api import StateMachine
 from microcosm_daemon.runner import ProcessRunner, SimpleRunner
@@ -42,12 +42,19 @@ class Daemon(object):
         ]
 
     @property
+    def defaults(self):
+        return {}
+
+    @property
     def loader(self):
         """
         Define the object graph config loader.
 
         """
-        return load_from_environ
+        return load_each(
+            load_from_dict(self.defaults),
+            load_from_environ,
+        )
 
     @property
     def import_name(self):

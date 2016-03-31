@@ -61,9 +61,16 @@ class ErrorPolicy(object):
 
         """
         self.last_health_report_time = time()
-        logger.info("Health is {}".format(
+
+        message = "Health is {}".format(
             new_health,
-        ))
+        )
+
+        if self.health != new_health:
+            logger.info(message)
+        else:
+            logger.debug(message)
+
         for error in self.errors:
             logger.warn("Caught error during state evalution: {}".format(error))
 
