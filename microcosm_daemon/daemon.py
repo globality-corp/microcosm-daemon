@@ -15,6 +15,10 @@ from microcosm_daemon.runner import ProcessRunner, SimpleRunner
 class Daemon(object):
     __metaclass__ = ABCMeta
 
+    def __init__(self):
+        self.parser = None
+        self.args = None
+
     @abstractproperty
     def name(self):
         """
@@ -85,15 +89,15 @@ class Daemon(object):
         Run the daemon.
 
         """
-        parser = self.make_arg_parser()
-        args = parser.parse_args()
+        self.parser = self.make_arg_parser()
+        self.args = self.parser.parse_args()
 
-        if args.processes < 1:
-            parser.error("--processes must be positive")
-        elif args.processes == 1:
-            runner = SimpleRunner(self, args)
+        if self.args.processes < 1:
+            self.parser.error("--processes must be positive")
+        elif self.args.processes == 1:
+            runner = SimpleRunner(self, self.args)
         else:
-            runner = ProcessRunner(args.processes, self, args)
+            runner = ProcessRunner(self.args.processes, self, self.args)
 
         runner.run()
 
