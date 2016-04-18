@@ -18,6 +18,7 @@ class Daemon(object):
     def __init__(self):
         self.parser = None
         self.args = None
+        self.graph = None
 
     @abstractproperty
     def name(self):
@@ -106,9 +107,9 @@ class Daemon(object):
         Start the state machine.
 
         """
-        graph = self.create_object_graph(args)
-        graph.logger.info("Starting daemon {}".format(self.name))
-        state_machine = StateMachine(graph, self)
+        self.graph = self.create_object_graph(args)
+        self.graph.logger.info("Starting daemon {}".format(self.name))
+        state_machine = StateMachine(self.graph, self)
         state_machine.run()
 
     def make_arg_parser(self):
