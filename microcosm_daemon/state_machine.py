@@ -2,6 +2,7 @@
 State machine processing.
 
 """
+from microcosm_daemon.reloader import Reloader
 
 
 class StateMachine(object):
@@ -10,9 +11,10 @@ class StateMachine(object):
 
     """
 
-    def __init__(self, graph, initial_state):
+    def __init__(self, graph, initial_state, never_reload=False):
         self.graph = graph
         self.current_state = initial_state
+        self.reloader = Reloader() if graph.metadata.debug and not never_reload else None
 
     def step(self):
         """
@@ -50,5 +52,7 @@ class StateMachine(object):
             with self.graph.signal_handler:
                 while self.should_run():
                     self.current_state = self.step()
+                    if self.reloader:
+                        self.reloader()
         except Exception:
             pass
