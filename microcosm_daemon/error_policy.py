@@ -72,7 +72,7 @@ class ErrorPolicy(object):
             logger.debug(message)
 
         for error in self.errors:
-            logger.warn("Caught error during state evalution: {}".format(error))
+            logger.warn("Caught error during state evalution: {}".format(error), exc_info=True)
 
     def maybe_report_health(self):
         """
