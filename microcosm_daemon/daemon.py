@@ -90,24 +90,29 @@ class Daemon(object):
         Run the daemon.
 
         """
-        self.parser = self.make_arg_parser()
-        self.args = self.parser.parse_args()
+        parser = self.make_arg_parser()
+        args = parser.parse_args()
 
-        if self.args.processes < 1:
-            self.parser.error("--processes must be positive")
-        elif self.args.processes == 1:
-            runner = SimpleRunner(self, self.args)
+        if args.processes < 1:
+            parser.error("--processes must be positive")
+        elif args.processes == 1:
+            runner = SimpleRunner(self)
         else:
-            runner = ProcessRunner(self.args.processes, self, self.args)
+            runner = ProcessRunner(args.processes, self)
 
         runner.run()
 
-    def start(self, args):
+    def start(self):
         """
         Start the state machine.
 
         """
-        self.graph = self.create_object_graph(args)
+        # reprocess the arguments because some aspects of argparse are not pickleable
+        # and will fail under multiprocessing
+        self.parser = self.make_arg_parser()
+        self.args = self.parser.parse_args()
+
+        self.graph = self.create_object_graph(self.args)
         self.graph.logger.info("Starting daemon {}".format(self.name))
         state_machine = StateMachine(self.graph, self)
         state_machine.run()
