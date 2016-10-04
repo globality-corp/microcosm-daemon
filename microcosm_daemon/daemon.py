@@ -114,6 +114,9 @@ class Daemon(object):
 
         self.graph = self.create_object_graph(self.args)
         self.graph.logger.info("Starting daemon {}".format(self.name))
+        self.run_state_machine()
+
+    def run_state_machine(self):
         state_machine = StateMachine(self.graph, self)
         state_machine.run()
 
@@ -144,6 +147,9 @@ class Daemon(object):
             root_path=self.root_path,
             loader=self.loader,
         )
-        graph.use(*self.components)
+        self.create_object_graph_components(graph)
         graph.lock()
         return graph
+
+    def create_object_graph_components(self, graph):
+        graph.use(*self.components)
