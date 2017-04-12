@@ -136,7 +136,7 @@ class Daemon(object):
         parser.add_argument("--processes", type=int, default=1)
         return parser
 
-    def create_object_graph(self, args):
+    def create_object_graph(self, args, loader=None):
         """
         Create (and lock) the object graph.
 
@@ -147,7 +147,7 @@ class Daemon(object):
             testing=args.testing,
             import_name=self.import_name,
             root_path=self.root_path,
-            loader=self.loader,
+            loader=loader or self.loader,
         )
         self.create_object_graph_components(graph)
         graph.lock()
@@ -157,7 +157,7 @@ class Daemon(object):
         graph.use(*self.components)
 
     @classmethod
-    def create_for_testing(cls, **kwargs):
+    def create_for_testing(cls, loader=None, **kwargs):
         """
         Initialize the daemon for unit testing.
 
@@ -166,5 +166,5 @@ class Daemon(object):
         """
         daemon = cls()
         daemon.args = Namespace(debug=False, testing=True, **kwargs)
-        daemon.graph = daemon.create_object_graph(daemon.args)
+        daemon.graph = daemon.create_object_graph(daemon.args, loader=loader)
         return daemon
