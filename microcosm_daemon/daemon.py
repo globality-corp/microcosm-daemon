@@ -147,7 +147,7 @@ class Daemon(object):
             testing=args.testing,
             import_name=self.import_name,
             root_path=self.root_path,
-            loader=loader or self.loader,
+            loader=load_each(loader, self.loader) if loader else self.loader,
         )
         self.create_object_graph_components(graph)
         graph.lock()
