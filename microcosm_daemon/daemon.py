@@ -6,6 +6,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from argparse import ArgumentParser, Namespace
 
 from microcosm.api import create_object_graph
+from microcosm.caching import ProcessCache
 from microcosm.loaders import load_each, load_from_environ, load_from_dict
 
 from microcosm_daemon.api import StateMachine
@@ -136,7 +137,7 @@ class Daemon(object):
         parser.add_argument("--processes", type=int, default=1)
         return parser
 
-    def create_object_graph(self, args, loader=None):
+    def create_object_graph(self, args, cache=None, loader=None):
         """
         Create (and lock) the object graph.
 
@@ -147,6 +148,7 @@ class Daemon(object):
             testing=args.testing,
             import_name=self.import_name,
             root_path=self.root_path,
+            cache=cache,
             loader=load_each(loader, self.loader) if loader else self.loader,
         )
         self.create_object_graph_components(graph)
@@ -157,14 +159,18 @@ class Daemon(object):
         graph.use(*self.components)
 
     @classmethod
-    def create_for_testing(cls, loader=None, **kwargs):
+    def create_for_testing(cls, loader=None, cache=None, **kwargs):
         """
         Initialize the daemon for unit testing.
 
         The daemon's graph will be populated but it will not be started.
 
         """
+        if cache is None:
+            scope = cls.__name__
+            cache = ProcessCache(scope=scope)
+
         daemon = cls()
         daemon.args = Namespace(debug=False, testing=True, **kwargs)
-        daemon.graph = daemon.create_object_graph(daemon.args, loader=loader)
+        daemon.graph = daemon.create_object_graph(daemon.args, cache=cache, loader=loader)
         return daemon
