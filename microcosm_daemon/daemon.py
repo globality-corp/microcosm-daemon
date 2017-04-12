@@ -3,7 +3,7 @@ Base class for command-line driven asynchronous worker.
 
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_each, load_from_environ, load_from_dict
@@ -107,14 +107,16 @@ class Daemon(object):
         Start the state machine.
 
         """
+        self.initialize()
+        self.graph.logger.info("Starting daemon {}".format(self.name))
+        self.run_state_machine()
+
+    def initialize(self):
         # reprocess the arguments because some aspects of argparse are not pickleable
         # and will fail under multiprocessing
         self.parser = self.make_arg_parser()
         self.args = self.parser.parse_args()
-
         self.graph = self.create_object_graph(self.args)
-        self.graph.logger.info("Starting daemon {}".format(self.name))
-        self.run_state_machine()
 
     def run_state_machine(self):
         state_machine = StateMachine(self.graph, self)
@@ -153,3 +155,16 @@ class Daemon(object):
 
     def create_object_graph_components(self, graph):
         graph.use(*self.components)
+
+    @classmethod
+    def create_for_testing(cls, **kwargs):
+        """
+        Initialize the daemon for unit testing.
+
+        The daemon's graph will be populated but it will not be started.
+
+        """
+        daemon = cls()
+        daemon.args = Namespace(debug=False, testing=True, **kwargs)
+        daemon.graph = daemon.create_object_graph(daemon.args)
+        return daemon
