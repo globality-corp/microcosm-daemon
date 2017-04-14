@@ -10,7 +10,6 @@ class StateMachine(object):
     A state machine for driving daemon processing.
 
     """
-
     def __init__(self, graph, initial_state, never_reload=False):
         self.graph = graph
         self.current_state = initial_state
@@ -33,6 +32,14 @@ class StateMachine(object):
             # stay in the same state
             return self.current_state
 
+    def advance(self):
+        """
+        Advance once step.
+
+        """
+        self.current_state = self.step()
+        return self.current_state
+
     def should_run(self):
         """
         Should the state machine keep running?
@@ -51,7 +58,7 @@ class StateMachine(object):
         try:
             with self.graph.signal_handler:
                 while self.should_run():
-                    self.current_state = self.step()
+                    self.advance()
                     if self.reloader:
                         self.reloader()
         except Exception:

@@ -78,6 +78,10 @@ class Daemon(object):
         """
         return None
 
+    @property
+    def initial_state(self):
+        return self
+
     @abstractmethod
     def __call__(self, graph):
         """
@@ -120,7 +124,7 @@ class Daemon(object):
         self.graph = self.create_object_graph(self.args)
 
     def run_state_machine(self):
-        state_machine = StateMachine(self.graph, self)
+        state_machine = StateMachine(self.graph, self.initial_state)
         state_machine.run()
 
     def make_arg_parser(self):
