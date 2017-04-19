@@ -3,6 +3,7 @@ Standby state tests.
 
 """
 from hamcrest import assert_that, equal_to, is_, instance_of
+from itertools import cycle, repeat
 from mock import MagicMock
 
 from microcosm.api import create_object_graph
@@ -17,21 +18,32 @@ def make_alternating_condition():
 
     """
     condition = MagicMock()
-    condition.side_effect = [
-        True,
-        False,
-        True,
-        False,
-    ]
+    condition.side_effect = cycle([True, False])
     return condition
 
 
-def example_non_standby_state(graph):
-    """
-    Example of a non-standby state.
+class FirstState(object):
 
-    """
-    pass
+    def __eq__(self, other):
+        return isinstance(other, self.__class__)
+
+    def __str__(self):
+        return "first"
+
+    def __call__(self, graph):
+        return SecondState()
+
+
+class SecondState(object):
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__)
+
+    def __str__(self):
+        return "second"
+
+    def __call__(self, graph):
+        return FirstState()
 
 
 class StandByDaemon(StandByMixin, Daemon):
@@ -51,13 +63,15 @@ class StandByDaemon(StandByMixin, Daemon):
         pass
 
 
-def assert_that_states_alternate(state_machine, non_standby_state):
+def assert_that_states_alternate(state_machine, non_standby_states):
     """
     Assert that a state machine alternates states.
 
     """
     next_state = state_machine.advance()
+    non_standby_state = next(non_standby_states)
     assert_that(next_state, is_(instance_of(StandByState)))
+    assert_that(str(next_state), is_(equal_to("standby")))
     assert_that(next_state.next_state, is_(equal_to(non_standby_state)))
 
     next_state = state_machine.advance()
@@ -65,7 +79,9 @@ def assert_that_states_alternate(state_machine, non_standby_state):
     assert_that(next_state.next_state, is_(equal_to(non_standby_state)))
 
     next_state = state_machine.advance()
+    non_standby_state = next(non_standby_states)
     assert_that(next_state, is_(instance_of(StandByState)))
+    assert_that(str(next_state), is_(equal_to("standby")))
     assert_that(next_state.next_state, is_(equal_to(non_standby_state)))
 
     next_state = state_machine.advance()
@@ -79,9 +95,9 @@ def test_standby():
 
     """
     graph = create_object_graph("test", testing=True)
-    initial_state = StandByState(example_non_standby_state, make_alternating_condition())
+    initial_state = StandByState(FirstState(), make_alternating_condition())
     state_machine = StateMachine(graph, initial_state, never_reload=True)
-    assert_that_states_alternate(state_machine, example_non_standby_state)
+    assert_that_states_alternate(state_machine, cycle([FirstState(), SecondState()]))
 
 
 def test_standby_mixin():
@@ -91,4 +107,4 @@ def test_standby_mixin():
     """
     daemon = StandByDaemon.create_for_testing()
     state_machine = StateMachine(daemon.graph, daemon.initial_state)
-    assert_that_states_alternate(state_machine, daemon)
+    assert_that_states_alternate(state_machine, repeat(daemon))

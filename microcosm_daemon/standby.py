@@ -19,6 +19,9 @@ class StandByGuard(object):
         self.next_state = next_state
         self.condition = condition
 
+    def __str__(self):
+        return str(self.next_state)
+
     def __call__(self, graph):
         """
         Invoke the wrapped state and then check the standby condition.
@@ -43,6 +46,9 @@ class StandByState(object):
     def __init__(self, next_state, condition):
         self.next_state = next_state
         self.condition = condition
+
+    def __str__(self):
+        return "standby"
 
     def __call__(self, graph):
         """
