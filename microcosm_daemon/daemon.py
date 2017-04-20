@@ -5,6 +5,7 @@ Base class for command-line driven asynchronous worker.
 from abc import ABCMeta, abstractmethod, abstractproperty
 from argparse import ArgumentParser, Namespace
 
+from inflection import underscore
 from microcosm.api import create_object_graph
 from microcosm.caching import ProcessCache
 from microcosm.loaders import load_each, load_from_environ, load_from_dict
@@ -24,12 +25,22 @@ class Daemon(object):
     @abstractproperty
     def name(self):
         """
-        Define the name of this process (and its object graph).
+        Define the name for this process's object graph.
 
         Must be overridden in a subclass.
 
         """
         pass
+
+    def __str__(self):
+        """
+        Define the printable name of this daemon.
+
+        Multiple daemons may share the same code base (and object graph), but each such
+        daemon should have different printable name.
+
+        """
+        return underscore(self.__class__.__name__)
 
     @property
     def components(self):
@@ -78,6 +89,10 @@ class Daemon(object):
         """
         return None
 
+    @property
+    def initial_state(self):
+        return self
+
     @abstractmethod
     def __call__(self, graph):
         """
@@ -120,7 +135,7 @@ class Daemon(object):
         self.graph = self.create_object_graph(self.args)
 
     def run_state_machine(self):
-        state_machine = StateMachine(self.graph, self)
+        state_machine = StateMachine(self.graph, self.initial_state)
         state_machine.run()
 
     def make_arg_parser(self):

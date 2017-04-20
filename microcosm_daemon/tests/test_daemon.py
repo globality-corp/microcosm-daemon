@@ -26,3 +26,5 @@ class FixtureDaemon(Daemon):
 def test_daemon_initialize():
     daemon = FixtureDaemon.create_for_testing()
     assert_that(daemon.graph.hello_world, is_(equal_to("hello world")))
+    assert_that(daemon.name, is_(equal_to("fixture")))
+    assert_that(str(daemon), is_(equal_to("fixture_daemon")))

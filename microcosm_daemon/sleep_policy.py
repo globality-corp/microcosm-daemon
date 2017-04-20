@@ -5,6 +5,7 @@ Sleep policy.
 from time import sleep
 
 from microcosm.api import defaults
+from microcosm_logging.decorators import logger
 
 
 class SleepNow(Exception):
@@ -13,6 +14,7 @@ class SleepNow(Exception):
         self.sleep_timeout = sleep_timeout
 
 
+@logger
 class SleepPolicy(object):
     """
     Determine whether to sleep before processing another state function.
