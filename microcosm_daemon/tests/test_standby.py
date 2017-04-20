@@ -12,6 +12,9 @@ from microcosm_daemon.standby import StandByGuard, StandByMixin, StandByState
 from microcosm_daemon.state_machine import StateMachine
 
 
+EPSILON = 0.01
+
+
 def make_alternating_condition():
     """
     Create a function that simulates a standby condition that alternates.
@@ -59,6 +62,10 @@ class StandByDaemon(StandByMixin, Daemon):
     def standby_condition(self):
         return make_alternating_condition()
 
+    @property
+    def standby_timeout(self):
+        return EPSILON
+
     def __call__(self, graph):
         pass
 
@@ -95,7 +102,7 @@ def test_standby():
 
     """
     graph = create_object_graph("test", testing=True)
-    initial_state = StandByState(FirstState(), make_alternating_condition())
+    initial_state = StandByState(FirstState(), make_alternating_condition(), EPSILON)
     state_machine = StateMachine(graph, initial_state, never_reload=True)
     assert_that_states_alternate(state_machine, cycle([FirstState(), SecondState()]))
 

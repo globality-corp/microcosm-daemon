@@ -6,6 +6,7 @@ from abc import ABCMeta, abstractproperty
 from six import add_metaclass
 
 from microcosm_daemon.sleep_policy import SleepNow
+from microcosm_logging.decorators import logger
 
 
 class StandByGuard(object):
@@ -15,9 +16,10 @@ class StandByGuard(object):
     Calls state and then checks condition.
 
     """
-    def __init__(self, next_state, condition):
+    def __init__(self, next_state, condition, standby_timeout):
         self.next_state = next_state
         self.condition = condition
+        self.standby_timeout = standby_timeout
 
     def __str__(self):
         return str(self.next_state)
@@ -27,15 +29,24 @@ class StandByGuard(object):
         Invoke the wrapped state and then check the standby condition.
 
         """
-        result = self.next_state(graph)
+        try:
+            result = self.next_state(graph)
+        except Exception:
+            result = None
+            should_standby = self.condition(graph)
+            if not should_standby:
+                raise
+            # NB: we may swallow an error here, but this is preferable to not standing by
+        else:
+            should_standby = self.condition(graph)
 
-        should_standby = self.condition(graph)
         if should_standby:
-            return StandByState(result or self.next_state, self.condition)
+            return StandByState(result or self.next_state, self.condition, self.standby_timeout, initial=True)
 
-        return StandByGuard(result, self.condition)
+        return StandByGuard(result, self.condition, self.standby_timeout)
 
 
+@logger
 class StandByState(object):
     """
     State for a daemon that is in standby.
@@ -43,9 +54,11 @@ class StandByState(object):
     Remains in standby until condition is met.
 
     """
-    def __init__(self, next_state, condition):
+    def __init__(self, next_state, condition, standby_timeout, initial=False):
         self.next_state = next_state
         self.condition = condition
+        self.standby_timeout = standby_timeout
+        self.initial = initial
 
     def __str__(self):
         return "standby"
@@ -57,9 +70,13 @@ class StandByState(object):
         """
         should_standby = self.condition(graph)
         if should_standby:
-            raise SleepNow(None)
+            if self.initial:
+                self.logger.info("Standing by...")
+                self.initial = False
+            raise SleepNow(self.standby_timeout)
 
-        return StandByGuard(self.next_state, self.condition)
+        self.logger.info("Starting up...")
+        return StandByGuard(self.next_state, self.condition, self.standby_timeout)
 
 
 @add_metaclass(ABCMeta)
@@ -79,5 +96,16 @@ class StandByMixin(object):
         pass
 
     @property
+    def standby_timeout(self):
+        """
+        Define the sleep interface while in standby.
+
+        Defaults to 1s; longer sleep intervals will delay both coming out of standby
+        and interrupting/terminating the daemon (depending on signal handling).
+
+        """
+        return 1.0
+
+    @property
     def initial_state(self):
-        return StandByState(self, self.standby_condition)
+        return StandByState(self, self.standby_condition, self.standby_timeout, initial=True)
