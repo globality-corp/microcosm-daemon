@@ -40,10 +40,12 @@ class StandByGuard(object):
         else:
             should_standby = self.condition(graph)
 
-        if should_standby:
-            return StandByState(result or self.next_state, self.condition, self.standby_timeout, initial=True)
+        next_state = result or self.next_state
 
-        return StandByGuard(result, self.condition, self.standby_timeout)
+        if should_standby:
+            return StandByState(next_state, self.condition, self.standby_timeout, initial=True)
+
+        return StandByGuard(next_state, self.condition, self.standby_timeout)
 
 
 @logger
