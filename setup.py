@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
-project = "microcosm_daemon"
-version = "0.11.1"
+project = "microcosm-daemon"
+version = "0.12.0"
 
 setup(
     name=project,
