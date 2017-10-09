@@ -17,6 +17,14 @@ HEALTH_ERROR = 2
 logger = getLogger("daemon.error_policy")
 
 
+class ExitError(Exception):
+    """
+    Unconditionally exit the state machine.
+
+    """
+    pass
+
+
 class FatalError(Exception):
     """
     Unconditionally exit the state machine.
@@ -72,6 +80,8 @@ class ErrorPolicy(object):
             logger.debug(message)
 
         for error in self.errors:
+            if isinstance(error, ExitError):
+                continue
             logger.warn("Caught error during state evalution: {}".format(error), exc_info=True)
 
     def maybe_report_health(self):
@@ -93,7 +103,7 @@ class ErrorPolicy(object):
         if value:
             self.errors.append(value)
         self.maybe_report_health()
-        return not self.strict and type is not FatalError
+        return not self.strict and type not in (ExitError, FatalError)
 
 
 @defaults(
