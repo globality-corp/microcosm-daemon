@@ -14,7 +14,7 @@ from microcosm_daemon.api import StateMachine
 from microcosm_daemon.runner import ProcessRunner, SimpleRunner
 
 
-class Daemon(object):
+class Daemon:
     __metaclass__ = ABCMeta
 
     def __init__(self):

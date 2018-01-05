@@ -33,7 +33,7 @@ def _iter_module_files():
                 yield filename
 
 
-class Reloader(object):
+class Reloader:
     """
     Checks modification times for Python modules and reloads execution.
 

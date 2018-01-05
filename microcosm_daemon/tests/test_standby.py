@@ -25,7 +25,7 @@ def make_alternating_condition():
     return condition
 
 
-class FirstState(object):
+class FirstState:
 
     def __eq__(self, other):
         return isinstance(other, self.__class__)
@@ -37,7 +37,7 @@ class FirstState(object):
         return SecondState()
 
 
-class SecondState(object):
+class SecondState:
 
     def __eq__(self, other):
         return isinstance(other, self.__class__)
