@@ -5,7 +5,7 @@ Execution abstraction.
 from multiprocessing import Pool
 
 
-class SimpleRunner(object):
+class SimpleRunner:
     """
     Run a daemon in the current process.
 
@@ -24,7 +24,7 @@ def _start(target, *args, **kwargs):
     target.start(*args, **kwargs)
 
 
-class ProcessRunner(object):
+class ProcessRunner:
     """
     Run a daemon in a different process.
 

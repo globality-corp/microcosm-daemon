@@ -15,7 +15,7 @@ class SleepNow(Exception):
 
 
 @logger
-class SleepPolicy(object):
+class SleepPolicy:
     """
     Determine whether to sleep before processing another state function.
 

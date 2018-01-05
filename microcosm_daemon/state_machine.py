@@ -5,7 +5,7 @@ State machine processing.
 from microcosm_daemon.reloader import Reloader
 
 
-class StateMachine(object):
+class StateMachine:
     """
     A state machine for driving daemon processing.
 

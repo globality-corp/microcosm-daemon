@@ -5,7 +5,7 @@ Signal handling.
 from signal import signal, SIGINT, SIGTERM
 
 
-class SignalHandler(object):
+class SignalHandler:
     """
     Handle signals raised during state machine execution.
 

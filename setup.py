@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 project = "microcosm-daemon"
-version = "0.13.0"
+version = "1.0.0"
 
 setup(
     name=project,
@@ -15,8 +15,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        "microcosm>=0.17.0",
-        "microcosm-logging>=0.3.0",
+        "microcosm>=2.0.0",
+        "microcosm-logging>=1.0.0",
     ],
     setup_requires=[
         "nose>=1.3.6",

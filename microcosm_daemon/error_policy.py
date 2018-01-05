@@ -33,7 +33,7 @@ class FatalError(Exception):
     pass
 
 
-class ErrorPolicy(object):
+class ErrorPolicy:
     """
     Handle errors from state functions.
 

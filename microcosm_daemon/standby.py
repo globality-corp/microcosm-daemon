@@ -3,13 +3,12 @@ Standby state machine.
 
 """
 from abc import ABCMeta, abstractproperty
-from six import add_metaclass
 
 from microcosm_daemon.sleep_policy import SleepNow
 from microcosm_logging.decorators import logger
 
 
-class StandByGuard(object):
+class StandByGuard:
     """
     State wrapper for a standby-enabled daemon.
 
@@ -49,7 +48,7 @@ class StandByGuard(object):
 
 
 @logger
-class StandByState(object):
+class StandByState:
     """
     State for a daemon that is in standby.
 
@@ -81,8 +80,7 @@ class StandByState(object):
         return StandByGuard(self.next_state, self.condition, self.standby_timeout)
 
 
-@add_metaclass(ABCMeta)
-class StandByMixin(object):
+class StandByMixin(metaclass=ABCMeta):
     """
     Mixin for a daemon to inject standby logic.
 
