@@ -82,7 +82,7 @@ class ErrorPolicy:
         for error in self.errors:
             if isinstance(error, ExitError):
                 continue
-            logger.warn("Caught error during state evalution: {}".format(error), exc_info=True)
+            logger.warn("Caught error during state evaluation: {}".format(error), exc_info=True)
 
     def maybe_report_health(self):
         """
