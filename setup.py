@@ -13,6 +13,7 @@ setup(
     url="https://github.com/globality-corp/microcosm-daemon",
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
+    python_requires=">=3.6",
     zip_safe=False,
     install_requires=[
         "microcosm>=2.0.0",
@@ -32,7 +33,6 @@ setup(
     },
     tests_require=[
         "coverage>=3.7.1",
-        "mock>=1.0.1",
         "PyHamcrest>=1.8.5",
     ],
 )

@@ -2,9 +2,10 @@
 Standby state tests.
 
 """
-from hamcrest import assert_that, equal_to, is_, instance_of
 from itertools import cycle, repeat
-from mock import MagicMock
+from unittest.mock import MagicMock
+
+from hamcrest import assert_that, equal_to, is_, instance_of
 
 from microcosm.api import create_object_graph
 from microcosm_daemon.daemon import Daemon
