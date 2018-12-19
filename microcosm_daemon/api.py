@@ -8,8 +8,8 @@ from microcosm_daemon.state_machine import StateMachine
 
 
 __all__ = [
-    ExitError,
-    FatalError,
-    SleepNow,
-    StateMachine
+    "ExitError",
+    "FatalError",
+    "SleepNow",
+    "StateMachine",
 ]
