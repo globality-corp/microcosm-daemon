@@ -16,7 +16,7 @@ setup(
     python_requires=">=3.6",
     zip_safe=False,
     install_requires=[
-        "microcosm>=2.0.0",
+        "microcosm>=2.12.0",
         "microcosm-logging>=1.0.0",
     ],
     setup_requires=[
