@@ -184,8 +184,8 @@ class Daemon:
         if cache is None:
             scope = cls.__name__
             cache = ProcessCache(scope=scope)
-
-        daemon = cls()
+        # To test SQS readers we pass event here
+        daemon = cls(event=kwargs.get('event', {}))
         daemon.args = Namespace(debug=False, testing=True, **kwargs)
         daemon.graph = daemon.create_object_graph(daemon.args, cache=cache, loader=loader)
         return daemon
