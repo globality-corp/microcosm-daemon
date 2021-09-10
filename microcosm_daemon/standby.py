@@ -4,8 +4,9 @@ Standby state machine.
 """
 from abc import ABCMeta, abstractproperty
 
-from microcosm_daemon.sleep_policy import SleepNow
 from microcosm_logging.decorators import logger
+
+from microcosm_daemon.sleep_policy import SleepNow
 
 
 class StandByGuard:

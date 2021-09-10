@@ -8,7 +8,7 @@ from argparse import ArgumentParser, Namespace
 from inflection import underscore
 from microcosm.api import create_object_graph
 from microcosm.caching import ProcessCache
-from microcosm.loaders import load_each, load_from_environ, load_from_dict
+from microcosm.loaders import load_each, load_from_dict, load_from_environ
 
 from microcosm_daemon.api import StateMachine
 from microcosm_daemon.runner import ProcessRunner, SimpleRunner

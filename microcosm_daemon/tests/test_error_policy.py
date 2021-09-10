@@ -11,7 +11,6 @@ from hamcrest import (
     raises,
 )
 
-
 from microcosm_daemon.error_policy import ErrorPolicy, FatalError
 
 

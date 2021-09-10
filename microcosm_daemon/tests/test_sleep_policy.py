@@ -4,13 +4,9 @@ Sleep policy tests.
 """
 from unittest.mock import patch
 
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
+from hamcrest import assert_that, equal_to, is_
 
-from microcosm_daemon.sleep_policy import SleepPolicy, SleepNow
+from microcosm_daemon.sleep_policy import SleepNow, SleepPolicy
 
 
 def test_no_sleep():
