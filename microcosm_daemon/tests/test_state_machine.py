@@ -2,6 +2,8 @@
 State machine tests.
 
 """
+from unittest.mock import patch
+
 from hamcrest import (
     assert_that,
     calling,
@@ -9,9 +11,8 @@ from hamcrest import (
     is_,
     raises,
 )
-from mock import patch
-
 from microcosm.api import create_object_graph
+
 from microcosm_daemon.error_policy import FatalError
 from microcosm_daemon.sleep_policy import SleepNow
 from microcosm_daemon.state_machine import StateMachine

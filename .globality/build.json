@@ -1,0 +1,7 @@
+{
+  "params": {
+    "name": "microcosm-daemon"
+  },
+  "type": "python-library",
+  "version": "2021.34.0"
+}

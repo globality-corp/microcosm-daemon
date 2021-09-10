@@ -2,7 +2,7 @@
 Signal handling.
 
 """
-from signal import signal, SIGINT, SIGTERM
+from signal import SIGINT, SIGTERM, signal
 
 
 class SignalHandler:

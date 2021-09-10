@@ -4,9 +4,9 @@ Daemon reloading on code change (for development/debug).
 Cribbed in part from: https://github.com/pallets/werkzeug/blob/master/werkzeug/_reloader.py
 
 """
-from logging import getLogger
 import os
 import sys
+from logging import getLogger
 
 
 def _iter_module_files():
