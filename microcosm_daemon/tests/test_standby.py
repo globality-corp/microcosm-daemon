@@ -5,9 +5,14 @@ Standby state tests.
 from itertools import cycle, repeat
 from unittest.mock import MagicMock
 
-from hamcrest import assert_that, equal_to, is_, instance_of
-
+from hamcrest import (
+    assert_that,
+    equal_to,
+    instance_of,
+    is_,
+)
 from microcosm.api import create_object_graph
+
 from microcosm_daemon.daemon import Daemon
 from microcosm_daemon.standby import StandByGuard, StandByMixin, StandByState
 from microcosm_daemon.state_machine import StateMachine
