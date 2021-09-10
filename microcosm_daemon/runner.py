@@ -2,6 +2,7 @@
 Execution abstraction.
 
 """
+from contextlib import closing
 from multiprocessing import Pool
 
 
@@ -37,9 +38,9 @@ class ProcessRunner:
         self.kwargs = kwargs
 
     def run(self):
-        pool = Pool(processes=self.processes)
-        for _ in range(self.processes):
-            pool.apply_async(_start, (self.target,) + self.args, self.kwargs)
+        with closing(Pool(processes=self.processes)) as pool:
+            for _ in range(self.processes):
+                pool.apply_async(_start, (self.target,) + self.args, self.kwargs)
 
         pool.close()
         try:
