@@ -6,6 +6,7 @@ from logging import getLogger
 from time import time
 
 from microcosm.api import defaults
+from microcosm.config.validation import typed
 
 
 # nagios style health codes
@@ -108,7 +109,7 @@ class ErrorPolicy:
 
 @defaults(
     strict=False,
-    health_report_interval=3.0,
+    health_report_interval=typed(float, 3.0),
 )
 def configure_error_policy(graph):
     return ErrorPolicy(

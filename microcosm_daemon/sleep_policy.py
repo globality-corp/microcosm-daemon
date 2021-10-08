@@ -5,6 +5,7 @@ Sleep policy.
 from time import sleep
 
 from microcosm.api import defaults
+from microcosm.config.validation import typed
 from microcosm_logging.decorators import logger
 
 
@@ -40,7 +41,7 @@ class SleepPolicy:
 
 
 @defaults(
-    default_sleep_timeout=0.5,
+    default_sleep_timeout=typed(float, 0.5),
 )
 def configure_sleep_policy(graph):
     return SleepPolicy(
