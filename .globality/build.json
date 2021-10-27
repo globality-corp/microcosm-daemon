@@ -1,7 +1,11 @@
 {
   "params": {
-    "name": "microcosm-daemon"
+    "name": "microcosm-daemon",
+    "pypi": {
+      "enabled": true,
+      "repository": "pypi"
+    }
   },
   "type": "python-library",
-  "version": "2021.34.0"
+  "version": "2021.41.0"
 }
