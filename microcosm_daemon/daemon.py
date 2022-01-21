@@ -125,7 +125,11 @@ class Daemon:
         """
         self.initialize()
         self.graph.logger.info("Starting daemon {}".format(self.name))
-        self.run_state_machine()
+
+        try:
+            self.run_state_machine()
+        finally:
+            exit(0)
 
     def initialize(self):
         # reprocess the arguments because some aspects of argparse are not pickleable

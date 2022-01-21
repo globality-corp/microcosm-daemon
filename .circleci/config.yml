@@ -295,9 +295,7 @@ workflows:
           context: 
           - Globality-Common
           requires:
-            - test
-            - lint
-            - typehinting
+            - build_docker
       - typehinting:
           context: 
           - Globality-Common
