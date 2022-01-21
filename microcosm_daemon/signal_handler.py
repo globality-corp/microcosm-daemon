@@ -2,7 +2,6 @@
 Signal handling.
 
 """
-from os import getpid
 from signal import SIGINT, SIGTERM, signal
 
 
@@ -12,15 +11,11 @@ class SignalHandler:
 
     """
 
-    def __init__(self, graph):
-        self.logger = graph.logger
-
+    def __init__(self):
         self.signalnums = [SIGINT, SIGTERM]
         self.interrupted = False
 
     def __call__(self, signalnum, frame):
-        self.logger.info(f"Signal {signalnum} received, PID: {getpid()}")
-
         self.interrupted = True
 
     def __enter__(self):
@@ -32,4 +27,4 @@ class SignalHandler:
 
 
 def configure_signal_handler(graph):
-    return SignalHandler(graph)
+    return SignalHandler()
