@@ -56,6 +56,7 @@ class Daemon:
             "error_policy",
             "signal_handler",
             "sleep_policy",
+            "health_reporter",
         ]
 
     @property
@@ -114,7 +115,7 @@ class Daemon:
         elif args.processes == 1:
             runner = SimpleRunner(self)
         else:
-            runner = ProcessRunner(args.processes, self)
+            runner = ProcessRunner(self, **vars(args))
 
         runner.run()
 
@@ -154,6 +155,9 @@ class Daemon:
         flags.add_argument("--testing", action="store_true")
 
         parser.add_argument("--processes", type=int, default=1)
+        parser.add_argument("--healthcheck-host", type=str, default="0.0.0.0")
+        parser.add_argument("--healthcheck-port", type=int, default=80)
+
         return parser
 
     def create_object_graph(self, args, cache=None, loader=None):

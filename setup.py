@@ -27,9 +27,18 @@ setup(
     entry_points={
         "microcosm.factories": [
             "error_policy = microcosm_daemon.error_policy:configure_error_policy",
+            "health_reporter = microcosm_daemon.health_reporter:configure_health_reporter",
             "signal_handler = microcosm_daemon.signal_handler:configure_signal_handler",
             "sleep_policy = microcosm_daemon.sleep_policy:configure_sleep_policy",
         ]
+    },
+    extras_require={
+        "healthcheck-server": [
+            "bjoern>=3.0.0",
+            "Flask<2",
+            "Flask>=1.0.2",
+            "requests>=2.27.1",
+        ],
     },
     tests_require=[
         "coverage>=3.7.1",

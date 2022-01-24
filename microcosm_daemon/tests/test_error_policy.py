@@ -12,6 +12,15 @@ from hamcrest import (
 )
 
 from microcosm_daemon.error_policy import ErrorPolicy, FatalError
+from microcosm_daemon.health_reporter import HealthReporter
+
+
+def new_error_policy(strict=True):
+    return ErrorPolicy(
+        strict=strict,
+        health_report_interval=3.0,
+        health_reporter=HealthReporter(),
+    )
 
 
 def test_no_error_strict():
@@ -19,7 +28,7 @@ def test_no_error_strict():
     Error handling is a noop if there are no errors.
 
     """
-    error_policy = ErrorPolicy(strict=True, health_report_interval=3.0)
+    error_policy = new_error_policy(strict=True)
     with error_policy:
         pass
 
@@ -31,7 +40,7 @@ def test_no_error_non_strict():
     Error handling is a noop if there are no errors.
 
     """
-    error_policy = ErrorPolicy(strict=False, health_report_interval=3.0)
+    error_policy = new_error_policy(strict=False)
     with error_policy:
         pass
 
@@ -43,7 +52,7 @@ def test_error_non_strict():
     Non strict error handling captures errors.
 
     """
-    error_policy = ErrorPolicy(strict=False, health_report_interval=3.0)
+    error_policy = new_error_policy(strict=False)
     error = Exception()
 
     with error_policy:
@@ -57,7 +66,7 @@ def test_error_strict():
     Strict error handling raises errors.
 
     """
-    error_policy = ErrorPolicy(strict=True, health_report_interval=3.0)
+    error_policy = new_error_policy(strict=True)
     error = Exception()
 
     def defer():
@@ -73,7 +82,7 @@ def test_fatal_non_strict():
     Error handling does not capture fatal errors.
 
     """
-    error_policy = ErrorPolicy(strict=False, health_report_interval=3.0)
+    error_policy = new_error_policy(strict=False)
     error = FatalError()
 
     def defer():
@@ -89,7 +98,7 @@ def test_fatal_strict():
     Error handling does not capture fatal errors.
 
     """
-    error_policy = ErrorPolicy(strict=True, health_report_interval=3.0)
+    error_policy = new_error_policy(strict=True)
     error = FatalError()
 
     def defer():
