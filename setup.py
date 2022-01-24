@@ -21,6 +21,7 @@ setup(
     ],
     setup_requires=[
         "nose>=1.3.6",
+        "parameterized>=0.8.1",
     ],
     dependency_links=[
     ],

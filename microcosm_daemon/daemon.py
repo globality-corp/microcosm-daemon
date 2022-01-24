@@ -118,7 +118,7 @@ class Daemon:
 
         runner.run()
 
-    def start(self):
+    def start(self, *args, **kwargs):
         """
         Start the state machine.
 
@@ -128,8 +128,14 @@ class Daemon:
 
         try:
             self.run_state_machine()
-        finally:
             exit(0)
+        except Exception as exc:
+            try:
+                self.graph.logger.error(
+                    f"Unexpected error, exiting with non-zero error code: {exc}",
+                )
+            finally:
+                exit(1)
 
     def initialize(self):
         # reprocess the arguments because some aspects of argparse are not pickleable
