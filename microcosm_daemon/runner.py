@@ -43,7 +43,7 @@ class ProcessRunner:
         self.init_healthcheck_server(**kwargs)
 
     def run(self):
-        self.pool = Pool(processes=self.processes)
+        self.pool = self.process_pool()
 
         for _ in range(self.processes):
             self.pool.apply_async(_start, (self.target,) + self.args, self.kwargs)
@@ -64,6 +64,8 @@ class ProcessRunner:
         from microcosm_daemon.healthcheck_server import run
         self.healthcheck_server = run
 
+    def process_pool(self):
+        return Pool(processes=self.processes)
 
     def close(self, terminate=False):
         if self.pool is not None:
@@ -72,10 +74,7 @@ class ProcessRunner:
             else:
                 self.pool.close()
 
-            try:
-                self.pool.join()
-            except KeyboardInterrupt:
-                self.pool.join()
+            self.pool.join()
 
         exit(0)
 
