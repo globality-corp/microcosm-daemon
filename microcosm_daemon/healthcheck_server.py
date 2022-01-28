@@ -8,12 +8,9 @@ def now():
     return int(time())
 
 
-def create_app():
+def create_app(processes: int, heartbeat_threshold_seconds: int):
     healthcheck_app = Flask(__name__)
     heartbeats = dict()
-    # TODO accept as config params
-    max_heartbeat_seconds = 5
-    processes = 4
 
     @healthcheck_app.route("/api/v1/health")
     def healthcheck():
@@ -28,7 +25,7 @@ def create_app():
         status = (
             200
             if (
-                max(last_heartbeats.values()) <= max_heartbeat_seconds and
+                max(last_heartbeats.values()) <= heartbeat_threshold_seconds and
                 len(last_heartbeats) == processes
             )
             else 500
@@ -52,6 +49,15 @@ def create_app():
     return healthcheck_app
 
 
-def run(healthcheck_host, healthcheck_port, **kwargs):
-
-    bjoern.run(create_app(), healthcheck_host, healthcheck_port)
+def run(
+    processes: int,
+    heartbeat_threshold_seconds: int,
+    healthcheck_host: str,
+    healthcheck_port: int,
+    **kwargs,
+):
+    bjoern.run(
+        create_app(processes, heartbeat_threshold_seconds),
+        healthcheck_host,
+        healthcheck_port,
+    )

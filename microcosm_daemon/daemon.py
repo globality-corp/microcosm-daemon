@@ -4,6 +4,7 @@ Base class for command-line driven asynchronous worker.
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
 from argparse import ArgumentParser, Namespace
+from os import environ
 
 from inflection import underscore
 from microcosm.api import create_object_graph
@@ -157,6 +158,13 @@ class Daemon:
         parser.add_argument("--processes", type=int, default=1)
         parser.add_argument("--healthcheck-host", type=str, default="0.0.0.0")
         parser.add_argument("--healthcheck-port", type=int, default=80)
+        parser.add_argument(
+            "--heartbeat-threshold-seconds",
+            type=int,
+            default=environ.get("MICROCOSM_HEARTBEAT_THRESHOLD_SECONDS", -1),
+            help="Oldest acceptable subprocess heartbeat for the daemon to be considered healthy. "
+                 "A negative value disables health checks",
+        )
 
         return parser
 

@@ -40,7 +40,7 @@ class ProcessRunner:
         self.healthcheck_server = None
 
         self.init_signal_handlers()
-        self.init_healthcheck_server()
+        self.init_healthcheck_server(**kwargs)
 
     def run(self):
         self.pool = Pool(processes=self.processes)
@@ -49,7 +49,7 @@ class ProcessRunner:
             self.pool.apply_async(_start, (self.target,) + self.args, self.kwargs)
 
         if self.healthcheck_server:
-            self.healthcheck_server(**self.kwargs)
+            self.healthcheck_server(self.processes, **self.kwargs)
         else:
             self.close()
 
@@ -57,13 +57,13 @@ class ProcessRunner:
         for signum in (SIGINT, SIGTERM):
             signal(signum, self.on_terminate)
 
-    def init_healthcheck_server(self):
-        try:
-            from microcosm_daemon.healthcheck_server import run
-
-            self.healthcheck_server = run
-        except ImportError:
+    def init_healthcheck_server(self, heartbeat_threshold_seconds: int, **kwargs):
+        if heartbeat_threshold_seconds < 0:
             self.healthcheck_server = None
+
+        from microcosm_daemon.healthcheck_server import run
+        self.healthcheck_server = run
+
 
     def close(self, terminate=False):
         if self.pool is not None:
