@@ -2,6 +2,7 @@ import os
 from logging import getLogger
 
 from microcosm_daemon.error_policy import ExitError
+from microcosm.api import defaults, typed
 
 
 try:
@@ -14,6 +15,9 @@ logger = getLogger("daemon.health_reporter")
 
 
 class HealthReporter:
+    def __init__(self, graph):
+        self.healthcheck_server_host = graph.config.health_reporter.healthcheck_server_host
+        self.healthcheck_server_port = graph.config.health_reporter.healthcheck_server_port
 
     def __call__(self, health, prev_health, errors):
         self.heartbeat()
@@ -37,13 +41,16 @@ class HealthReporter:
 
         try:
             requests.post(
-                # TODO move to config
-                "http://localhost:80/api/v1/heartbeat",
+                f"{self.healthcheck_server_host}:{self.healthcheck_server_port}/api/v1/heartbeat",
                 json={"pid": os.getpid()},
             )
-        except Exception:
-            logger.debug("Failed to send heartbeat")
+        except Exception as err:
+            logger.debug(f"Failed to send heartbeat: {err}")
 
 
+@defaults(
+    healthcheck_server_host="http://localhost",
+    healthcheck_server_port=typed(bool, default_value=80),
+)
 def configure_health_reporter(graph):
-    return HealthReporter()
+    return HealthReporter(graph)
