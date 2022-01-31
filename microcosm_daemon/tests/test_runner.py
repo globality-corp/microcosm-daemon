@@ -42,7 +42,7 @@ def test_process_runner_to_terminate_pool(signum):
         2,
         heartbeat_threshold_seconds=-1,
         healthcheck_host="0.0.0.0",
-        healthcheck_port=80,    
+        healthcheck_port=80,
     )
     terminated = False
 

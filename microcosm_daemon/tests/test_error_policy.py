@@ -11,9 +11,9 @@ from hamcrest import (
     raises,
 )
 from microcosm.api import create_object_graph
+
 from microcosm_daemon.error_policy import ErrorPolicy, FatalError
 from microcosm_daemon.health_reporter import HealthReporter
-from microcosm.loaders import load_from_dict
 
 
 def new_error_policy(strict=True):
