@@ -19,13 +19,6 @@ setup(
         "microcosm>=2.12.0",
         "microcosm-logging>=1.0.0",
     ],
-    extras_require={
-        "test": [
-            "coverage>=3.7.1",
-            "parameterized>=0.8.1",
-            "PyHamcrest>=1.8.5",
-        ],
-    },
     setup_requires=[
         "nose>=1.3.6",
     ],
@@ -40,6 +33,11 @@ setup(
         ]
     },
     extras_require={
+        "test": [
+            "coverage>=3.7.1",
+            "parameterized>=0.8.1",
+            "PyHamcrest>=1.8.5",
+        ],
         "healthcheck-server": [
             "bjoern>=3.0.0",
             "Flask<2",

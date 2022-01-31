@@ -67,7 +67,7 @@ class ErrorPolicy:
 
     def report_health(self, new_health):
         """
-        Report health information to logs.
+        Report health information.
 
         """
         self.last_health_report_time = time()
