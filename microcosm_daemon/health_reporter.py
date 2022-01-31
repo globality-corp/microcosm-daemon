@@ -1,8 +1,9 @@
 import os
 from logging import getLogger
 
-from microcosm_daemon.error_policy import ExitError
 from microcosm.api import defaults, typed
+
+from microcosm_daemon.error_policy import ExitError
 
 
 try:

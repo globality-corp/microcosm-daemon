@@ -1,4 +1,5 @@
 from time import time
+from typing import Dict
 
 import bjoern
 from flask import Flask, jsonify, request
@@ -10,7 +11,7 @@ def now():
 
 def create_app(processes: int, heartbeat_threshold_seconds: int):
     healthcheck_app = Flask(__name__)
-    heartbeats = dict()
+    heartbeats: Dict[str, int] = dict()
 
     @healthcheck_app.route("/api/v1/health")
     def healthcheck():
