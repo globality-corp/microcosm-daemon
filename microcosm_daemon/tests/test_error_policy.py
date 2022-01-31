@@ -10,16 +10,19 @@ from hamcrest import (
     is_,
     raises,
 )
-
+from microcosm.api import create_object_graph
 from microcosm_daemon.error_policy import ErrorPolicy, FatalError
 from microcosm_daemon.health_reporter import HealthReporter
+from microcosm.loaders import load_from_dict
 
 
 def new_error_policy(strict=True):
+    graph = create_object_graph("example", testing=True)
+
     return ErrorPolicy(
         strict=strict,
         health_report_interval=3.0,
-        health_reporter=HealthReporter(),
+        health_reporter=HealthReporter(graph),
     )
 
 

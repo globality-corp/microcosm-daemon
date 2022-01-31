@@ -51,7 +51,7 @@ class HealthReporter:
 
 @defaults(
     healthcheck_server_host="http://localhost",
-    healthcheck_server_port=typed(bool, default_value=80),
+    healthcheck_server_port=typed(int, default_value=80),
 )
 def configure_health_reporter(graph):
     return HealthReporter(graph)

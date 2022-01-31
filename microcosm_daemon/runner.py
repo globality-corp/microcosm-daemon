@@ -57,9 +57,10 @@ class ProcessRunner:
         for signum in (SIGINT, SIGTERM):
             signal(signum, self.on_terminate)
 
-    def init_healthcheck_server(self, heartbeat_threshold_seconds: int, **kwargs):
+    def init_healthcheck_server(self, heartbeat_threshold_seconds: int = -1, **kwargs):
         if heartbeat_threshold_seconds < 0:
             self.healthcheck_server = None
+            return
 
         from microcosm_daemon.healthcheck_server import run
         self.healthcheck_server = run

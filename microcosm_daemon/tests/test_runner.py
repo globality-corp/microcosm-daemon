@@ -37,7 +37,13 @@ def sleep_and_send_signal(pid, seconds, signum):
 def test_process_runner_to_terminate_pool(signum):
     daemon = FixtureDaemon()
     pool = Mock(wraps=Pool(2))
-    runner = ProcessRunner(2, daemon)
+    runner = ProcessRunner(
+        daemon,
+        2,
+        heartbeat_threshold_seconds=-1,
+        healthcheck_host="0.0.0.0",
+        healthcheck_port=80,    
+    )
     terminated = False
 
     with patch.object(runner, "process_pool") as mocked_process_pool:
