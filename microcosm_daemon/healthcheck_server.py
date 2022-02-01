@@ -1,3 +1,4 @@
+from logging import getLogger
 from time import time
 from typing import Dict
 
@@ -38,12 +39,14 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
 
     @healthcheck_app.route("/api/v1/heartbeat", methods=["POST"])
     def worker_status():
+        logger = getLogger("healthcheck_server")
         req_data = request.get_json()
         pid = int(req_data.get("pid"))
 
         if not pid:
             return {}, 400
         else:
+            logger.debug(f"Received heartbeat from {pid}")
             heartbeats[pid] = now()
             return {}, 201
 
