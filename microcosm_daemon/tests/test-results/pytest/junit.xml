@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="1" hostname="AF-C02F1MPHMD6M" name="pytest" skipped="1" tests="2" time="1.040" timestamp="2022-02-02T14:19:43.783895"><testcase classname="microcosm_daemon.tests.test_runner" name="test_process_runner_to_terminate_pool" time="0.001"><skipped message="[NOTRUN] yield tests were removed in pytest 4.0 - test_process_runner_to_terminate_pool will be ignored" type="pytest.xfail" /></testcase><testcase classname="microcosm_daemon.tests.test_runner" name="test_healtcheck_server" time="0.233"><failure message="UnboundLocalError: local variable 'terminated' referenced before assignment">def test_healtcheck_server():
+        daemon = FixtureDaemon()
+    
+        # starting thread, meant to send signal in 2 seconds
+        thread = Thread(
+            target=sleep_check_health_and_send_signal(
+                pid=os.getpid(),
+                seconds=2,
+                signum=SIGTERM,
+            ),
+        )
+        thread.daemon = True
+        try:
+            thread.start()
+        except AssertionError:
+            raise False
+    
+        with patch.object(daemon, "make_arg_parser") as mock_args_parser:
+            mock_args_parser.return_value = Mock(
+                parse_args=Mock(
+                    return_value=Mock(
+                        processes=2,
+                        heartbeat_threshold_seconds=10,
+                        healthcheck_host="0.0.0.0",
+                        healthcheck_port=80,
+                    ),
+                ),
+            )
+            try:
+                daemon.run()
+                print("NEXT LINE")
+            except SystemExit:
+                print("TERMINATED")
+                terminated = True
+    
+&gt;       assert terminated
+E       UnboundLocalError: local variable 'terminated' referenced before assignment
+
+microcosm_daemon/tests/test_runner.py:125: UnboundLocalError</failure></testcase></testsuite></testsuites>

@@ -39,7 +39,7 @@ setup(
             "PyHamcrest>=1.8.5",
         ],
         "healthcheck-server": [
-            "bjoern>=3.0.0",
+            "waitress>=2.0.0",
             "Flask<2",
             "Flask>=1.0.2",
             "requests>=2.27.1",
