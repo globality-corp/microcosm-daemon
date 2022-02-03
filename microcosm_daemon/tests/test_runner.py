@@ -22,7 +22,7 @@ class FixtureDaemon(Daemon):
         return "fixture"
 
     def __call__(self, *args, **kwargs):
-        raise SleepNow()
+        print("Some call")
 
 
 def sleep_and_send_signal(pid, seconds, signum):
@@ -33,68 +33,69 @@ def sleep_and_send_signal(pid, seconds, signum):
     return exec
 
 
-@parameterized([
-    (SIGINT,),
-    (SIGTERM,),
-])
-def test_process_runner_to_terminate_pool(signum):
-    daemon = FixtureDaemon()
-    pool = Mock(wraps=Pool(2))
-    runner = ProcessRunner(
-        daemon,
-        2,
-        heartbeat_threshold_seconds=-1,
-        healthcheck_host="0.0.0.0",
-        healthcheck_port=80,
-    )
-    terminated = False
+# @parameterized([
+#     (SIGINT,),
+#     (SIGTERM,),
+# ])
+# def test_process_runner_to_terminate_pool(signum):
+#     daemon = FixtureDaemon()
+#     pool = Mock(wraps=Pool(2))
+#     runner = ProcessRunner(
+#         daemon,
+#         2,
+#         heartbeat_threshold_seconds=-1,
+#         healthcheck_host="0.0.0.0",
+#         healthcheck_port=80,
+#     )
+#     terminated = False
 
-    with patch.object(runner, "process_pool") as mocked_process_pool:
-        mocked_process_pool.return_value = pool
+#     with patch.object(runner, "process_pool") as mocked_process_pool:
+#         mocked_process_pool.return_value = pool
 
-        # starting thread, meant to send signal in 2 seconds
-        thread = Thread(
-            target=sleep_and_send_signal(
-                pid=os.getpid(),
-                seconds=2,
-                signum=signum,
-            ),
-        )
-        thread.daemon = True
-        thread.start()
+#         # starting thread, meant to send signal in 2 seconds
+#         thread = Thread(
+#             target=sleep_and_send_signal(
+#                 pid=os.getpid(),
+#                 seconds=2,
+#                 signum=signum,
+#             ),
+#         )
+#         thread.daemon = True
+#         thread.start()
 
-        try:
-            runner.run()
-        except SystemExit:
-            terminated = True
+#         try:
+#             runner.run()
+#         except SystemExit:
+#             terminated = True
 
-    assert terminated
+#     assert terminated
 
-    pool.close.assert_called_once()
-    pool.terminate.assert_called_once()
+#     pool.close.assert_called_once()
+#     pool.terminate.assert_called_once()
 
-def sleep_check_health_and_send_signal(pid, seconds, signum):
-    def exec():
-        sleep(seconds)
-
-        # resp = get("http://localhost:80/api/v1/health")
-
-        os.kill(pid, signum)
-        # assert_that(
-        #     resp.status_code,
-        #     equal_to(200),
-        # )
-
-    return exec
 
 def test_healtcheck_server():
+    healthcheck_status_code = None
+
+    def sleep_check_health_and_send_signal(pid, seconds, signum):
+        def exec():
+            print("SLEEP")
+            sleep(seconds)
+
+            resp = get("http://localhost:80/api/v1/health")
+
+            print(f"KILL {resp.status_code}")
+            os.kill(pid, signum)
+
+        return exec
+
     daemon = FixtureDaemon()
 
     # starting thread, meant to send signal in 2 seconds
     thread = Thread(
         target=sleep_check_health_and_send_signal(
             pid=os.getpid(),
-            seconds=2,
+            seconds=10,
             signum=SIGTERM,
         ),
     )
@@ -115,10 +116,7 @@ def test_healtcheck_server():
                 ),
             ),
         )
-        try:
-            daemon.run()
-        except SystemExit:
-            print("TERMINATED")
-            terminated = True
-
-    assert terminated
+    
+        daemon.run()
+        print(f"DONE {healthcheck_status_code}")
+        assert False

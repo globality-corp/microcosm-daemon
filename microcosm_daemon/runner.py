@@ -4,6 +4,7 @@ Execution abstraction.
 """
 from multiprocessing import Pool
 from signal import SIGINT, SIGTERM, signal
+from time import sleep
 
 
 class SimpleRunner:
@@ -22,7 +23,10 @@ class SimpleRunner:
 
 
 def _start(target, *args, **kwargs):
-    target.start(*args, **kwargs)
+    # target.start(*args, **kwargs)
+    while True:
+        sleep(1)
+        print("Waited a bit")
 
 
 class ProcessRunner:
@@ -80,4 +84,5 @@ class ProcessRunner:
         exit(0)
 
     def on_terminate(self, signum, frame):
+        print("SIGNAL HANDLER TERMINATING")
         self.close(terminate=True)
