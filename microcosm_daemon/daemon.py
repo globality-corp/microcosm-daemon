@@ -143,7 +143,7 @@ class Daemon:
         # reprocess the arguments because some aspects of argparse are not pickleable
         # and will fail under multiprocessing
         self.parser = self.make_arg_parser()
-        self.args = self.parser.parse_args()
+        self.args = self.parser.parse_known_args()
         self.graph = self.create_object_graph(self.args)
 
     def run_state_machine(self):

@@ -2,6 +2,7 @@
 Execution abstraction.
 
 """
+import os, sys
 from multiprocessing import Pool
 from signal import SIGINT, SIGTERM, signal
 from time import sleep
@@ -23,10 +24,8 @@ class SimpleRunner:
 
 
 def _start(target, *args, **kwargs):
-    # target.start(*args, **kwargs)
-    while True:
-        sleep(1)
-        print("Waited a bit")
+    target.start(*args, **kwargs)
+
 
 
 class ProcessRunner:
@@ -54,6 +53,7 @@ class ProcessRunner:
 
         if self.healthcheck_server:
             self.healthcheck_server(self.processes, **self.kwargs)
+            exit(0)
         else:
             self.close()
 
