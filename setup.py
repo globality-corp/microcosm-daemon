@@ -38,7 +38,7 @@ setup(
             "parameterized>=0.8.1",
             "PyHamcrest>=1.8.5",
         ],
-        "healthcheck-server": [
+        "healthcheck": [
             "waitress>=2.0.0",
             "Flask<2",
             "Flask>=1.0.2",

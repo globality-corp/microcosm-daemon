@@ -1,5 +1,5 @@
 from logging import getLogger
-from time import time, sleep
+from time import time
 from typing import Dict
 
 from flask import Flask, jsonify, request
@@ -17,7 +17,6 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
 
     @healthcheck_app.route("/api/v1/health")
     def healthcheck():
-        print(f"heartbeats {heartbeats}")
         if not heartbeats:
             return {}, 500
 
@@ -41,7 +40,6 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
 
     @healthcheck_app.route("/api/v1/heartbeat", methods=["POST"])
     def worker_status():
-        print("HEARTBEAT")
         req_data = request.get_json()
         pid = int(req_data.get("pid"))
 

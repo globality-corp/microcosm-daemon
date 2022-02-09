@@ -2,10 +2,8 @@
 Execution abstraction.
 
 """
-import os, sys
 from multiprocessing import Pool
 from signal import SIGINT, SIGTERM, signal
-from time import sleep
 
 
 class SimpleRunner:
@@ -25,7 +23,6 @@ class SimpleRunner:
 
 def _start(target, *args, **kwargs):
     target.start(*args, **kwargs)
-
 
 
 class ProcessRunner:
@@ -53,6 +50,8 @@ class ProcessRunner:
 
         if self.healthcheck_server:
             self.healthcheck_server(self.processes, **self.kwargs)
+            # The healtcheck server will block while running, and swallow any SystemExit exception
+            # If we're reaching this point, we're exiting and need to re-raise `SystemExit`
             exit(0)
         else:
             self.close()
@@ -84,5 +83,4 @@ class ProcessRunner:
         exit(0)
 
     def on_terminate(self, signum, frame):
-        print("SIGNAL HANDLER TERMINATING")
         self.close(terminate=True)

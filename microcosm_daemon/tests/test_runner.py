@@ -1,13 +1,12 @@
 import os
-from logging import DEBUG
 from multiprocessing import Pool
 from signal import SIGINT, SIGTERM
-from sre_constants import BRANCH
+from subprocess import Popen
 from threading import Thread
 from time import sleep
 from unittest.mock import Mock, patch
 
-from hamcrest import assert_that, equal_to
+from hamcrest import assert_that, equal_to, has_length
 from parameterized import parameterized
 from requests import get
 
@@ -23,7 +22,7 @@ class FixtureDaemon(Daemon):
         return "fixture"
 
     def __call__(self, *args, **kwargs):
-        print("Some call")
+        raise SleepNow()
 
 
 def sleep_and_send_signal(pid, seconds, signum):
@@ -75,49 +74,18 @@ def test_process_runner_to_terminate_pool(signum):
     pool.terminate.assert_called_once()
 
 
-# def test_healtcheck_server():
-#     healthcheck_status_code = None
+if __name__ == "__main__":
+    daemon = FixtureDaemon()
+    daemon.run()
 
-#     def sleep_check_health_and_send_signal(pid, seconds, signum):
-#         def exec():
-#             print("SLEEP")
-#             sleep(seconds)
 
-#             resp = get("http://localhost:80/api/v1/health")
-
-#             print(f"KILL {resp.status_code}")
-#             os.kill(pid, signum)
-
-#         return exec
-
-#     daemon = FixtureDaemon()
-
-#     # starting thread, meant to send signal in 2 seconds
-#     thread = Thread(
-#         target=sleep_check_health_and_send_signal(
-#             pid=os.getpid(),
-#             seconds=3,
-#             signum=SIGTERM,
-#         ),
-#     )
-#     thread.daemon = True
-#     try:
-#         thread.start()
-#     except AssertionError:
-#         raise False
-
-#     with patch.object(daemon, "make_arg_parser") as mock_args_parser:
-#         mock_args_parser.return_value = Mock(
-#             parse_args=Mock(
-#                 return_value=Mock(
-#                     processes=2,
-#                     heartbeat_threshold_seconds=10,
-#                     healthcheck_host="0.0.0.0",
-#                     healthcheck_port=80,
-#                 ),
-#             ),
-#         )
-    
-#         daemon.run()
-#         print(f"DONE {healthcheck_status_code}")
-#         assert False
+def test_healtcheck_server():
+    popen_instance = Popen(
+        "python microcosm_daemon/tests/test_runner.py --processes 2 --heartbeat-threshold-seconds 2",
+        shell=True,
+    )
+    sleep(2)
+    resp = get("http://localhost:80/api/v1/health")
+    assert_that(resp.status_code, equal_to(200))
+    assert_that(resp.json()["heartbeats"], has_length(2))
+    popen_instance.terminate()
