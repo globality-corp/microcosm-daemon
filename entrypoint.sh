@@ -35,7 +35,7 @@ elif [ "$1" = "lint" ]; then
    flake8 ${NAME}
 elif [ "$1" = "typehinting" ]; then
    # Install standard type-linting dependencies
-   pip --quiet install .healthcheck mypy types-requests types-waitress
+   pip --quiet install mypy types-requests types-waitress
    mypy ${NAME} --ignore-missing-imports
 else
    echo "Cannot execute $@"
