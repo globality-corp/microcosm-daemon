@@ -19,6 +19,7 @@ class HealthReporter:
     def __init__(self, graph):
         self.healthcheck_server_host = graph.config.health_reporter.healthcheck_server_host
         self.healthcheck_server_port = graph.config.health_reporter.healthcheck_server_port
+        self.heartbeat_timeout = graph.config.health_reporter.heartbeat_timeout
 
     def __call__(self, health, prev_health, errors):
         self.heartbeat()
@@ -44,6 +45,7 @@ class HealthReporter:
             requests.post(
                 f"{self.healthcheck_server_host}:{self.healthcheck_server_port}/api/v1/heartbeat",
                 json={"pid": os.getpid()},
+                timeout=self.heartbeat_timeout,
             )
         except Exception as err:
             logger.debug(f"Failed to send heartbeat: {err}")
@@ -52,6 +54,7 @@ class HealthReporter:
 @defaults(
     healthcheck_server_host="http://localhost",
     healthcheck_server_port=typed(int, default_value=80),
+    heartbeat_timeout=typed(int, 1),
 )
 def configure_health_reporter(graph):
     return HealthReporter(graph)

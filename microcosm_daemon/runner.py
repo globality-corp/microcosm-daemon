@@ -50,7 +50,7 @@ class ProcessRunner:
 
         if self.healthcheck_server:
             self.healthcheck_server(self.processes, **self.kwargs)
-            # The healtcheck server will block while running, and swallow any SystemExit exception
+            # The healthcheck server will block while running, and swallow any SystemExit exception
             # If we're reaching this point, we're exiting and need to re-raise `SystemExit`
             exit(0)
         else:
