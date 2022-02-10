@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 project = "microcosm-daemon"
-version = "1.2.0"
+version = "1.3.0"
 
 setup(
     name=project,
@@ -19,13 +19,6 @@ setup(
         "microcosm>=2.12.0",
         "microcosm-logging>=1.0.0",
     ],
-    extras_require={
-        "test": [
-            "coverage>=3.7.1",
-            "parameterized>=0.8.1",
-            "PyHamcrest>=1.8.5",
-        ],
-    },
     setup_requires=[
         "nose>=1.3.6",
     ],
@@ -34,9 +27,23 @@ setup(
     entry_points={
         "microcosm.factories": [
             "error_policy = microcosm_daemon.error_policy:configure_error_policy",
+            "health_reporter = microcosm_daemon.health_reporter:configure_health_reporter",
             "signal_handler = microcosm_daemon.signal_handler:configure_signal_handler",
             "sleep_policy = microcosm_daemon.sleep_policy:configure_sleep_policy",
         ]
+    },
+    extras_require={
+        "test": [
+            "coverage>=3.7.1",
+            "parameterized>=0.8.1",
+            "PyHamcrest>=1.8.5",
+        ],
+        "healthcheck": [
+            "waitress>=2.0.0",
+            "Flask<2",
+            "Flask>=1.0.2",
+            "requests>=2.27.1",
+        ],
     },
     tests_require=[
         "coverage>=3.7.1",

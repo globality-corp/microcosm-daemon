@@ -31,14 +31,16 @@ class ProcessRunner:
 
     """
 
-    def __init__(self, processes, target, *args, **kwargs):
+    def __init__(self, target, processes, *args, **kwargs):
         self.processes = processes
         self.target = target
         self.args = args
         self.kwargs = kwargs
         self.pool = None
+        self.healthcheck_server = None
 
         self.init_signal_handlers()
+        self.init_healthcheck_server(**kwargs)
 
     def run(self):
         self.pool = self.process_pool()
@@ -46,11 +48,25 @@ class ProcessRunner:
         for _ in range(self.processes):
             self.pool.apply_async(_start, (self.target,) + self.args, self.kwargs)
 
-        self.close()
+        if self.healthcheck_server:
+            self.healthcheck_server(self.processes, **self.kwargs)
+            # The healthcheck server will block while running, and swallow any SystemExit exception
+            # If we're reaching this point, we're exiting and need to re-raise `SystemExit`
+            exit(0)
+        else:
+            self.close()
 
     def init_signal_handlers(self):
         for signum in (SIGINT, SIGTERM):
             signal(signum, self.on_terminate)
+
+    def init_healthcheck_server(self, heartbeat_threshold_seconds: int = -1, **kwargs):
+        if heartbeat_threshold_seconds < 0:
+            self.healthcheck_server = None
+            return
+
+        from microcosm_daemon.healthcheck_server import run
+        self.healthcheck_server = run
 
     def process_pool(self):
         return Pool(processes=self.processes)

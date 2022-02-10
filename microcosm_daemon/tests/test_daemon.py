@@ -2,6 +2,7 @@
 Test daemon loading.
 
 """
+
 from hamcrest import assert_that, equal_to, is_
 
 from microcosm_daemon.daemon import Daemon

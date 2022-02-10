@@ -4,6 +4,7 @@ Base class for command-line driven asynchronous worker.
 """
 from abc import ABCMeta, abstractmethod, abstractproperty
 from argparse import ArgumentParser, Namespace
+from os import environ
 
 from inflection import underscore
 from microcosm.api import create_object_graph
@@ -56,6 +57,7 @@ class Daemon:
             "error_policy",
             "signal_handler",
             "sleep_policy",
+            "health_reporter",
         ]
 
     @property
@@ -114,7 +116,7 @@ class Daemon:
         elif args.processes == 1:
             runner = SimpleRunner(self)
         else:
-            runner = ProcessRunner(args.processes, self)
+            runner = ProcessRunner(self, **vars(args))
 
         runner.run()
 
@@ -141,7 +143,7 @@ class Daemon:
         # reprocess the arguments because some aspects of argparse are not pickleable
         # and will fail under multiprocessing
         self.parser = self.make_arg_parser()
-        self.args = self.parser.parse_args()
+        self.args, _ = self.parser.parse_known_args()
         self.graph = self.create_object_graph(self.args)
 
     def run_state_machine(self):
@@ -160,6 +162,16 @@ class Daemon:
         flags.add_argument("--testing", action="store_true")
 
         parser.add_argument("--processes", type=int, default=1)
+        parser.add_argument("--healthcheck-host", type=str, default="0.0.0.0")
+        parser.add_argument("--healthcheck-port", type=int, default=80)
+        parser.add_argument(
+            "--heartbeat-threshold-seconds",
+            type=int,
+            default=environ.get("MICROCOSM_HEARTBEAT_THRESHOLD_SECONDS", -1),
+            help="Oldest acceptable subprocess heartbeat for the daemon to be considered healthy. "
+                 "A negative value disables health checks",
+        )
+
         return parser
 
     def create_object_graph(self, args, cache=None, loader=None):

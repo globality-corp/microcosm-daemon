@@ -39,12 +39,13 @@ class ErrorPolicy:
     Handle errors from state functions.
 
     """
-    def __init__(self, strict, health_report_interval):
+    def __init__(self, strict, health_report_interval, health_reporter):
         self.strict = strict
         self.health_report_interval = health_report_interval
         self.errors = []
         self.health = self.compute_health()
         self.last_health_report_time = 0
+        self.health_reporter = health_reporter
 
     def compute_health(self):
         """
@@ -66,24 +67,11 @@ class ErrorPolicy:
 
     def report_health(self, new_health):
         """
-        Report health information to logs.
+        Report health information.
 
         """
         self.last_health_report_time = time()
-
-        message = "Health is {}".format(
-            new_health,
-        )
-
-        if self.health != new_health:
-            logger.info(message)
-        else:
-            logger.debug(message)
-
-        for error in self.errors:
-            if isinstance(error, ExitError):
-                continue
-            logger.warn("Caught error during state evaluation: {}".format(error), exc_info=True)
+        self.health_reporter(new_health, self.health, self.errors)
 
     def maybe_report_health(self):
         """
@@ -115,4 +103,5 @@ def configure_error_policy(graph):
     return ErrorPolicy(
         strict=graph.config.error_policy.strict,
         health_report_interval=graph.config.error_policy.health_report_interval,
+        health_reporter=graph.health_reporter,
     )
