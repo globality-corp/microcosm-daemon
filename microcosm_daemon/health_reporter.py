@@ -43,7 +43,7 @@ class HealthReporter:
 
         try:
             requests.post(
-                f"{self.healthcheck_server_host}:{self.healthcheck_server_port}/api/v1/heartbeat",
+                f"{self.healthcheck_server_host}:{self.healthcheck_server_port}/api/heartbeat",
                 json={"pid": os.getpid()},
                 timeout=self.heartbeat_timeout,
             )

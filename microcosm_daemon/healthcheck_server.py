@@ -15,7 +15,7 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
     healthcheck_app = Flask(__name__)
     heartbeats: Dict[str, int] = dict()
 
-    @healthcheck_app.route("/api/v1/health")
+    @healthcheck_app.route("/api/health")
     def healthcheck():
         if not heartbeats:
             return {}, 500
@@ -38,7 +38,7 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
             heartbeats=last_heartbeats,
         ), status
 
-    @healthcheck_app.route("/api/v1/heartbeat", methods=["POST"])
+    @healthcheck_app.route("/api/heartbeat", methods=["POST"])
     def worker_status():
         req_data = request.get_json()
         pid = int(req_data.get("pid"))
