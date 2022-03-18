@@ -43,6 +43,7 @@ setup(
             "Flask<2",
             "Flask>=1.0.2",
             "requests>=2.27.1",
+            "markupsafe<2.1.0",
         ],
     },
     tests_require=[
