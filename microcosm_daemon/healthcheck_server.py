@@ -18,6 +18,7 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
     @healthcheck_app.route("/api/health")
     def healthcheck():
         if not heartbeats:
+            logger.warning("Daemon has no heartbeat. Healthcheck status: UNHEALTHY")
             return {}, 500
 
         ts = now()
@@ -34,6 +35,9 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
             else 500
         )
 
+        if status != 200:
+            logger.warning("Healthcheck heartbeat status: UNHEALTHY")
+        logger.debug("Healthcheck heartbeat status: HEALTHY")
         return jsonify(
             heartbeats=last_heartbeats,
         ), status
