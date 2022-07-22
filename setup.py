@@ -42,6 +42,8 @@ setup(
             "waitress>=2.0.0",
             "Flask<2",
             "Flask>=1.0.2",
+            # Due to https://github.com/pallets/jinja/issues/1585
+            "markupsafe<2.1",
             "requests>=2.27.1",
         ],
     },
