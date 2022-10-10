@@ -91,5 +91,5 @@ def test_healtcheck_server(num_processes):
     sleep(2)
     resp = get("http://localhost:80/api/health")
     assert_that(resp.status_code, equal_to(200))
-    assert_that(resp.json()["heartbeats"], has_length(2))
+    assert_that(resp.json()["heartbeats"], has_length(num_processes))
     popen_instance.terminate()
