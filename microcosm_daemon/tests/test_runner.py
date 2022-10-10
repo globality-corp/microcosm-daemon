@@ -93,3 +93,8 @@ def test_healtcheck_server(num_processes):
     assert_that(resp.status_code, equal_to(200))
     assert_that(resp.json()["heartbeats"], has_length(num_processes))
     popen_instance.terminate()
+    # Wait for child process to terminate
+    while True:
+        poll_output = popen_instance.poll()
+        if poll_output is None:
+            break
