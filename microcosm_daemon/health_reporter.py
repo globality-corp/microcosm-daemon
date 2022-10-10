@@ -35,7 +35,10 @@ class HealthReporter:
             if isinstance(error, ExitError):
                 continue
 
-            logger.warn(f"Caught error during state evaluation: {error}", exc_info=True)
+            logger.exception(
+                "Caught error during state evaluation",
+                extra=dict(error=error),
+            )
 
     def heartbeat(self):
         if requests is None:
@@ -48,7 +51,7 @@ class HealthReporter:
                 timeout=self.heartbeat_timeout,
             )
         except Exception as err:
-            logger.debug(f"Failed to send heartbeat: {err}")
+            logger.debug("Failed to send heartbeat", extra=dict(error=err))  # noqa: G200
 
 
 @defaults(

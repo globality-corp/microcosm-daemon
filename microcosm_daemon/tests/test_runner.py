@@ -81,11 +81,11 @@ if __name__ == "__main__":
 
 def test_healtcheck_server():
     popen_instance = Popen(
-        "python microcosm_daemon/tests/test_runner.py --processes 2 --heartbeat-threshold-seconds 2",
+        "python microcosm_daemon/tests/test_runner.py --processes 1 --heartbeat-threshold-seconds 2",
         shell=True,
     )
     sleep(2)
     resp = get("http://localhost:80/api/health")
     assert_that(resp.status_code, equal_to(200))
-    assert_that(resp.json()["heartbeats"], has_length(2))
+    assert_that(resp.json()["heartbeats"], has_length(1))
     popen_instance.terminate()

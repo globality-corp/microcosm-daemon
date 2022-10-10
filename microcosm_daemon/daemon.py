@@ -113,7 +113,9 @@ class Daemon:
 
         if args.processes < 1:
             parser.error("--processes must be positive")
-        elif args.processes == 1:
+        elif args.processes == 1 and args.heartbeat_threshold_seconds < 0:
+            # If a heartbeat is configured, we'll run with a master-worker setup
+            # Otherwise just run one process overall
             runner = SimpleRunner(self)
         else:
             runner = ProcessRunner(self, **vars(args))
