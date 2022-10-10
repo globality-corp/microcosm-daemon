@@ -79,9 +79,13 @@ if __name__ == "__main__":
     daemon.run()
 
 
-def test_healtcheck_server():
+@parameterized(
+    (1,),
+    (2,),
+)
+def test_healtcheck_server(num_processes):
     popen_instance = Popen(
-        "python microcosm_daemon/tests/test_runner.py --processes 2 --heartbeat-threshold-seconds 2",
+        f"python microcosm_daemon/tests/test_runner.py --processes {num_processes} --heartbeat-threshold-seconds 2",
         shell=True,
     )
     sleep(2)
