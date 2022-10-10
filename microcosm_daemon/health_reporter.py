@@ -51,10 +51,7 @@ class HealthReporter:
                 timeout=self.heartbeat_timeout,
             )
         except Exception as err:
-            logger.debug(
-                "Failed to send heartbeat",
-                extra=dict(error=err)
-            )
+            logger.debug("Failed to send heartbeat", extra=dict(error=err))  # noqa: G200
 
 
 @defaults(
