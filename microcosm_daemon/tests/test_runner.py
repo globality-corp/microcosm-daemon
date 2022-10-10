@@ -79,12 +79,23 @@ if __name__ == "__main__":
     daemon.run()
 
 
-def test_healthcheck_server(num_processes):
+@parameterized([
+    (1,),
+    (2,),
+])
+def test_healtcheck_server(num_processes):
+    sleep(1)
     popen_instance = Popen(
-        "python microcosm_daemon/tests/test_runner.py --processes 2 --heartbeat-threshold-seconds 2",
+        f"python microcosm_daemon/tests/test_runner.py --processes {num_processes} --heartbeat-threshold-seconds 2",
         shell=True,
     )
+    sleep(2)
     resp = get("http://localhost:80/api/health")
     assert_that(resp.status_code, equal_to(200))
-    assert_that(resp.json()["heartbeats"], has_length(2))
+    assert_that(resp.json()["heartbeats"], has_length(num_processes))
     popen_instance.terminate()
+    # Wait for child process to terminate
+    while True:
+        poll_output = popen_instance.poll()
+        if poll_output is None:
+            break
