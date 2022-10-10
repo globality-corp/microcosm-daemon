@@ -36,7 +36,10 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
         )
 
         if status != 200:
-            logger.warning(f"Healthcheck heartbeat status: UNHEALTHY. Heartbeat values: {heartbeats}")
+            logger.warning(
+                "Healthcheck heartbeat status: UNHEALTHY.",
+                extra=dict(heartbeat_values=heartbeats)
+            )
         logger.debug("Healthcheck heartbeat status: HEALTHY")
         return jsonify(
             heartbeats=last_heartbeats,
@@ -50,7 +53,10 @@ def create_app(processes: int, heartbeat_threshold_seconds: int):
         if not pid:
             return {}, 400
         else:
-            logger.debug(f"Received heartbeat from {pid}")
+            logger.debug(
+                "Received heartbeat from {pid}",
+                extra=dict(pid=pid),
+            )
             heartbeats[pid] = now()
             return {}, 201
 
