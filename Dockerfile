@@ -13,7 +13,7 @@
 
 # ----------- deps -----------
 # Install from Debian Stretch with modern Python support
-FROM python:slim-stretch as deps
+FROM python:3.7-slim as deps
 
 #
 # Most services will use the same set of packages here, though a few will install
@@ -26,7 +26,6 @@ ENV EXTRA_INDEX_URL ${EXTRA_INDEX_URL}
 ENV CORE_PACKAGES locales
 ENV BUILD_PACKAGES build-essential libffi-dev
 ENV OTHER_PACKAGES libssl-dev
-
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${CORE_PACKAGES} ${BUILD_PACKAGES} && \
