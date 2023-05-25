@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-daemon"
-version = "1.5.0"
+version = "1.5.2"
 
 setup(
     name=project,
