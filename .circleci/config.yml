@@ -17,7 +17,7 @@ executors:
   node-executor:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:14.16.1
+      - image: circleci/node:14.19.0
         environment:
           EXTRA_INDEX_URL: "InjectedDuringRuntime"
           AWS_ECR_DOMAIN: "InjectedDuringRuntime"
@@ -27,7 +27,7 @@ executors:
   globality-build-executor:
     working_directory: ~/repo
     docker:
-      - image: ${AWS_ECR_DOMAIN}/globality-build:2021.41.0
+      - image: ${AWS_ECR_DOMAIN}/globality-build:master
         aws_auth:
           aws_access_key_id: ${AWS_ACCESS_KEY_ID}
           aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -39,7 +39,7 @@ executors:
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2021.41.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:master
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -54,7 +54,7 @@ defaults: &defaults
 deploy_defaults: &deploy_defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2021.41.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:master
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -175,7 +175,6 @@ jobs:
 
 
 
-
   typehinting:
     <<: *defaults
 
@@ -203,6 +202,8 @@ jobs:
           name: Run Typehinting
           command: |
             docker run -it --volumes-from service_tests ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1} typehinting
+
+
 
   deploy_jfrog_rc:
     <<: *defaults
@@ -258,15 +259,15 @@ workflows:
   build-and-release:
     jobs:
       - checkout:
-          context: 
-          - Globality-Common
+          context:
+            - Globality-Common
           filters:
             # run for all branches and tags
             tags:
               only: /.*/
       - build_docker:
-          context: 
-          - Globality-Common
+          context:
+            - Globality-Common
           requires:
             - checkout
           filters:
@@ -274,8 +275,8 @@ workflows:
             tags:
               only: /.*/
       - lint:
-          context: 
-          - Globality-Common
+          context:
+            - Globality-Common
           requires:
             - build_docker
           filters:
@@ -283,8 +284,8 @@ workflows:
             tags:
               only: /.*/
       - test:
-          context: 
-          - Globality-Common
+          context:
+            - Globality-Common
           requires:
             - build_docker
           filters:
@@ -292,15 +293,15 @@ workflows:
             tags:
               only: /.*/
       - deploy_jfrog_rc:
-          context: 
-          - Globality-Common
+          context:
+            - Globality-Common
           requires:
             - test
             - lint
             - typehinting
       - typehinting:
-          context: 
-          - Globality-Common
+          context:
+            - Globality-Common
           requires:
             - build_docker
           filters:
@@ -309,8 +310,8 @@ workflows:
               only: /.*/
       - publish_library:
           context:
-          - Globality-Common
-          - Python-Context
+            - Globality-Common
+            - Python-Context
           requires:
             - test
             - lint

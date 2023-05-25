@@ -2,8 +2,12 @@
 Execution abstraction.
 
 """
+from logging import getLogger
 from multiprocessing import Pool
 from signal import SIGINT, SIGTERM, signal
+
+
+logger = getLogger("daemon.process_runner")
 
 
 class SimpleRunner:
@@ -46,7 +50,7 @@ class ProcessRunner:
         self.pool = self.process_pool()
 
         for _ in range(self.processes):
-            self.pool.apply_async(_start, (self.target,) + self.args, self.kwargs)
+            self.pool.apply_async(_start, (self.target,) + self.args, self.kwargs, error_callback=self.on_error)
 
         if self.healthcheck_server:
             self.healthcheck_server(self.processes, **self.kwargs)
@@ -81,6 +85,10 @@ class ProcessRunner:
             self.pool.join()
 
         exit(0)
+
+    def on_error(self, error):
+        logger.error("Error while running async processor: %s", error)
+        self.close(terminate=True)
 
     def on_terminate(self, signum, frame):
         self.close(terminate=True)
