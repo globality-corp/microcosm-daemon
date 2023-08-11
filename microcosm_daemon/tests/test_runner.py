@@ -7,7 +7,6 @@ from time import sleep
 from unittest.mock import Mock, patch
 
 from hamcrest import assert_that, equal_to, has_length
-from parameterized import parameterized
 from requests import get
 
 from microcosm_daemon.api import SleepNow
@@ -33,11 +32,15 @@ def sleep_and_send_signal(pid, seconds, signum):
     return exec
 
 
-@parameterized([
-    (SIGINT,),
-    (SIGTERM,),
-])
-def test_process_runner_to_terminate_pool(signum):
+def test_process_runner_to_terminate_pool():
+    process_runner_to_terminate_pool(SIGINT)
+
+
+def test_process_runner_to_terminate_pool_sig_term():
+    process_runner_to_terminate_pool(SIGTERM)
+
+
+def process_runner_to_terminate_pool(signum):
     daemon = FixtureDaemon()
     pool = Mock(wraps=Pool(2))
     runner = ProcessRunner(
