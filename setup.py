@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-daemon"
-version = "1.5.2"
+version = "2.0.0"
 
 setup(
     name=project,
@@ -21,7 +21,6 @@ setup(
         "microcosm-logging>=1.0.0",
     ],
     setup_requires=[
-        "nose>=1.3.6",
     ],
     dependency_links=[
     ],
@@ -38,13 +37,13 @@ setup(
             "coverage>=3.7.1",
             "parameterized>=0.8.1",
             "PyHamcrest>=1.8.5",
+            "pytest-cov>=3.0.0",
+            "pytest>=6.2.5",
         ],
         "healthcheck": [
             "waitress>=2.0.0",
-            "Flask<2",
-            "Flask>=1.0.2",
-            # Due to https://github.com/pallets/jinja/issues/1585
-            "markupsafe<2.1",
+            "Flask>=2",
+            "markupsafe>=2.1",
             "requests>=2.27.1",
         ],
     },

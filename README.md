@@ -34,3 +34,8 @@ Asynchronous workers using a state machine.
     `FatalError` are swallowed by the state machine's error handler although the
     state machine can be made to fail fast by configuring the error policy to be
     strict.
+
+
+## Version 2.0.0
+
+Version 2.0.0 is a breaking change and requires `Flask>=2` and `markupsafe>=2.1`
