@@ -1,9 +1,8 @@
 from logging import getLogger
 from time import time
-from typing import Dict
 
 from flask import Flask, jsonify, request
-from waitress import create_server
+from waitress import serve
 
 
 def now():
@@ -13,7 +12,7 @@ def now():
 def create_app(processes: int, heartbeat_threshold_seconds: int):
     logger = getLogger("daemon.healthcheck_server")
     healthcheck_app = Flask(__name__)
-    heartbeats: Dict[str, int] = dict()
+    heartbeats: dict[str, int] = dict()
 
     @healthcheck_app.route("/api/health")
     def healthcheck():
@@ -70,9 +69,8 @@ def run(
     healthcheck_port: int,
     **kwargs,
 ):
-    server = create_server(
+    serve(
         create_app(processes, heartbeat_threshold_seconds),
         host=healthcheck_host,
         port=healthcheck_port,
     )
-    server.run()
