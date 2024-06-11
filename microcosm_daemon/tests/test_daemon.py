@@ -16,7 +16,7 @@ class FixtureDaemon(Daemon):
 
     @property
     def components(self):
-        return super(FixtureDaemon, self).components + [
+        return super().components + [
             "hello_world",
         ]
 

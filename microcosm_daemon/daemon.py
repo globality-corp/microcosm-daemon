@@ -128,7 +128,7 @@ class Daemon:
 
         """
         self.initialize()
-        self.graph.logger.info("Starting daemon {}".format(self.name))
+        self.graph.logger.info(f"Starting daemon {self.name}")
 
         try:
             self.run_state_machine()

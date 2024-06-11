@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-daemon"
-version = "2.0.0"
+version = "3.0.0"
 
 setup(
     name=project,
@@ -17,8 +17,8 @@ setup(
     python_requires=">=3.6",
     zip_safe=False,
     install_requires=[
-        "microcosm>=2.12.0",
-        "microcosm-logging>=1.0.0",
+        "microcosm>=4.0.0",
+        "microcosm-logging>=2.0.0",
     ],
     setup_requires=[
     ],
@@ -41,7 +41,7 @@ setup(
             "pytest>=6.2.5",
         ],
         "healthcheck": [
-            "waitress>=2.0.0",
+            "waitress>=3.0.0",
             "Flask>=2",
             "markupsafe>=2.1",
             "requests>=2.27.1",
